@@ -30,8 +30,9 @@ module.exports = {
 	 // to remove password value
 	toJSON: function() {
 	  var obj = this.toObject();
+        // delete obj.password;
 	   obj.password="HIDDEN"
-	  return obj;
+	   return obj;
 	   } 
   },
   // Encrypting pasword before saving it to database

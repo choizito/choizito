@@ -16,15 +16,57 @@
  */
 
 module.exports = {
-    
-  
-
-
-  /**
-   * Overrides for the settings in `config/controllers.js`
-   * (specific to UserController)
-   */
-  _config: {}
-
+	signup: function (req, res) {
+		var username = req.param("username");
+		var password = req.param("password");
+		var mail = req.param("mail"); 
+		User.findOne({ name:username},function(err, usr){
+		    if (err) {
+		        res.send(500, { error: "DB Error" });
+		    } else if (usr) {
+		        res.send(400, {error: "Username already Taken"});
+		    } else {
+			var bcrypt = require('bcrypt');
+			 bcrypt.hash(password, 10, function(err, hash) {
+			      if(err) res.send(400, {error: "Password Hash failed"});
+			      password = hash;
+			    });
+		         
+		        User.create({name: username, password: password,mail: mail}).done(function(error, user) {
+		        if (error) {
+		            res.send(500, {error: error});
+		        } else {
+		            req.session.user = user;
+		            res.send(user);
+		        }
+		    });
+		}
+	    });
+	},
+	login: function (req, res) {
+	    var username = req.param("username");
+	    var password = req.param("password");
+	     
+	    User.findOne({ name:username}, function(err, usr) {
+		if (err) {
+		    res.send(500, { error: "DB Error" });
+		} else {
+		    if (usr) {
+			var bcrypt = require('bcrypt');
+                        bcrypt.compare(password, usr.password, function(error, result) {
+                        if (result){
+		            req.session.user = usr;
+		            res.send(usr);
+		        } else {
+		            res.send(400, { error: "Wrong Password" });
+		        }
+                        });
+		    } else {
+		        res.send(404, { error: "User not Found" });
+		    }
+		}
+	    });
+	}
+     
   
 };
