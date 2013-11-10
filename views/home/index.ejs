@@ -1,18 +1,56 @@
-<div id="mobile-nav" class="visible-xs">
-  <div class="" id="flyout-container">
-     <ul class="nav flyout-menu">
-       <li>
-	<a title="" href="#"> Home</a>
-       </li>
-       <li>
-       <a title="" href="#"> Users</a>
-       </li>
-       <li>
-       <a title="" href="#">About</a>
-       </li>
-     </ul>
-  </div>
+
+
+<h1 id="main-title"><%= __('Welcome') %></h1>
+<div>
+    <h3>Login</h3>
+    <input type="text" id="loginName" placeholder="name" />
+    <input type="password" id="loginPassword" placeholder="password" />
+    <button id="loginButton">Login</button>
 </div>
-
-
-
+<div>
+    <h3>Signup</h3>
+    <input type="text" id="signupName" placeholder="name" />
+    <input type="password" id="signupPassword" placeholder="password" />
+    <input type="text" id="mail" placeholder="mail" />
+    <button id="signupButton">Signup</button>
+</div>
+<script>
+    $("#loginButton").click(function(){
+        var username = $("#loginName").val();
+        var password = $("#loginPassword").val();
+        if (username && password) {
+            $.post(
+                '/login',
+                {username: username, password:password},
+                function () {
+                    window.location = "/vote";
+                }
+            ).fail(function(res){
+                alert("Error: " + res.getResponseHeader("error"));
+            });
+        } else {
+            alert("A username and password is required");
+        }
+    });
+$("#signupButton").click(function(){
+    var username = $("#signupName").val();
+    var password = $("#signupPassword").val();
+    var mail = $("#mail").val();
+    
+    if (username && password) {
+        
+            $.post(
+                '/signup',
+                {username: username, password:password,mail:mail},
+                function () {
+                    window.location = "/vote";
+                }
+            ).fail(function(res){
+                alert("Error: " + res);
+            });
+        
+    } else {
+        alert("A username and password is required");
+    }
+}); 
+</script>
